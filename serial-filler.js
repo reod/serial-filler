@@ -50,6 +50,11 @@ const serialFiller = {
         },
 
     {
+      title: 'Email',
+      onclick: generateRandomEmail
+    },
+
+    {
       title: 'Jedno zdanie',
       onclick: generateLoremIpsum
     },

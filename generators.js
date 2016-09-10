@@ -55,13 +55,18 @@ function generateRandomDate() {
   return new Date(from + Math.random() * (to - from));
 };
 
+function generateRandomNumberBetween(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 function generateRandomCharFrom(chars = '') {
   const i = Math.floor(Math.random() * chars.length);
   return chars[i];
 };
 
-function generateRandomDigit() {
-  return generateRandomCharFrom('0123456789');
+function generateRandomDigit(notZero = false) {
+  const digits = notZero? '123456789' : '0123456789';
+  return generateRandomCharFrom(digits);
 };
 
 function generateRandomLetter() {
@@ -113,4 +118,15 @@ function generateRandomNumberOfLength(base = generateRandomDigit(), length = 0) 
   base += generateRandomDigit();
 
   return generateRandomNumberOfLength(base, length-1);
+};
+
+function generateRandomEmail() {
+  const user = 's'.repeat(generateRandomNumberBetween(1, 10));
+  const domain = 's'.repeat(generateRandomNumberBetween(1, 10));
+  const country = 's'.repeat(generateRandomNumberBetween(2, 3));
+
+  const emailPattern = `${user}@${domain}.${country}`;
+  console.log(emailPattern)
+
+  return createRandomPatternInFormat(emailPattern);
 };
