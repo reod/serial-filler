@@ -4,38 +4,64 @@ const serialFiller = {
 
   supportedGenerators: [
     {
-      menuText: 'PESEL mężczyzny',
-      generatorFn: generatePESEL.bind('M')
+      id: 'pesels',
+      title: 'PESEL'
+    },
+
+        {
+          parentId: 'pesels',
+          title: 'PESEL mężczyzny',
+          onclick: generatePESEL.bind(null, 'M')
+        },
+
+        {
+          parentId: 'pesels',
+          title: 'PESEL kobiety',
+          onclick: generatePESEL.bind(null, 'F')
+        },
+
+    {
+      id: 'phones',
+      title: 'Numer telefonu'
+    },
+
+        {
+          parentId: 'phones',
+          title: 'domowy jako 263 43 45',
+          onclick: createRandomPatternInFormat.bind(null, 'ddd dd dd')
+        },
+
+        {
+          parentId: 'phones',
+          title: 'domowy jako 2634345',
+          onclick: createRandomPatternInFormat.bind(null, '+ddddddd')
+        },
+
+        {
+          parentId: 'phones',
+          title: 'komórka jako 505 543 345',
+          onclick: createRandomPatternInFormat.bind(null, 'ddd ddd ddd')
+        },
+
+        {
+          parentId: 'phones',
+          title: 'komórka jako 505543345',
+          onclick: createRandomPatternInFormat.bind(null, 'ddddddddd')
+        },
+
+    {
+      title: 'Jedno zdanie',
+      onclick: generateLoremIpsum
     },
 
     {
-      menuText: 'PESEL kobiety',
-      generatorFn: generatePESEL.bind('F')
+      title: 'Cały akapit',
+      onclick: generateLoremIpsumParagraph
     },
 
     {
-      menuText: 'Numer komórkowy',
-      generatorFn: generateMobilePhoneNumber
-    },
-
-    {
-      menuText: 'Numer domowy',
-      generatorFn: generateLandlinePhoneNumber
-    },
-
-    {
-      menuText: 'Jedno zdanie',
-      generatorFn: generateLoremIpsum
-    },
-
-    {
-      menuText: 'Cały akapit',
-      generatorFn: generateLoremIpsumParagraph
-    },
-
-    {
-      menuText: 'Kilka akapitów',
-      generatorFn: generateLoremIpsum
+      title: 'Kilka akapitów',
+      onclick: generateLoremIpsum
     },
   ],
   
@@ -47,18 +73,17 @@ const serialFiller = {
     this.supportedGenerators.forEach(this.createContextMenuOption, this);
   },
 
-  createContextMenuOption(generator) {
-    const { menuText, generatorFn } = generator;
-    const menuOptionDescriptor = {
-      title: menuText,
-      type : 'normal',
-      contexts : ['editable'],
-      onclick: (info, tab) => {
-        chrome.tabs.sendMessage(tab.id, { value: generatorFn() });
-      }
-    };
-
-    chrome.contextMenus.create(menuOptionDescriptor);   
+  createContextMenuOption(descriptor) {
+    chrome.contextMenus.create(Object.assign({}, descriptor, {
+        type: 'normal',
+        contexts: ['editable'],
+        onclick: (info, tab) => {
+          chrome.tabs.sendMessage(tab.id, {
+            value: descriptor.onclick()
+          });
+        }
+      })
+    );
   }
 };
 

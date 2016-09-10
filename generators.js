@@ -23,9 +23,9 @@ function generatePESEL(sex) {
   }
 
   if (sex === 'M') {
-    numbers[weights.length - 1] = generateRandomDigitFrom('13579');
+    numbers[weights.length - 1] = generateRandomCharFrom('13579');
   } else if (sex === 'F') {
-    numbers[weights.length - 1] = generateRandomDigitFrom('02468');
+    numbers[weights.length - 1] = generateRandomCharFrom('02468');
   } else {
     numbers[weights.length - 1] = generateRandomDigit();
   }
@@ -55,13 +55,34 @@ function generateRandomDate() {
   return new Date(from + Math.random() * (to - from));
 };
 
-function generateRandomDigit() {
-  return Math.floor(Math.random() * 10);
+function generateRandomCharFrom(chars = '') {
+  const i = Math.floor(Math.random() * chars.length);
+  return chars[i];
 };
-  
-function generateRandomDigitFrom(digits = '0123456789') {
-  const i = Math.floor(Math.random() * digits.length);
-  return digits[i];
+
+function generateRandomDigit() {
+  return generateRandomCharFrom('0123456789');
+};
+
+function generateRandomLetter() {
+  // TODO: check if it's whole alphabeth
+  const alphabeth = 'abcdefghijklmnoprstuwxyz';
+  return generateRandomCharFrom(alphabeth);
+};
+
+function createRandomPatternInFormat(format = '') {
+  const replacer = c => {
+    switch(c) {
+      case 'd': return generateRandomDigit();
+      case 's': return generateRandomLetter();
+      default: return c;
+    }
+  };
+
+  return format
+    .split('')
+    .map(replacer)
+    .join('');
 };
 
 function generateLoremIpsum() {
@@ -92,12 +113,4 @@ function generateRandomNumberOfLength(base = generateRandomDigit(), length = 0) 
   base += generateRandomDigit();
 
   return generateRandomNumberOfLength(base, length-1);
-};
-
-function generateMobilePhoneNumber() {
-  return generateRandomNumberOfLength(undefined, 9);
-};
-
-function generateLandlinePhoneNumber() {
-  return generateRandomNumberOfLength(undefined, 7);
 };
