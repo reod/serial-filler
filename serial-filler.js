@@ -14,6 +14,16 @@ const serialFiller = {
     },
 
     {
+      menuText: 'Numer komórkowy',
+      generatorFn: generateMobilePhoneNumber
+    },
+
+    {
+      menuText: 'Numer domowy',
+      generatorFn: generateLandlinePhoneNumber
+    },
+
+    {
       menuText: 'Jedno zdanie',
       generatorFn: generateLoremIpsum
     },

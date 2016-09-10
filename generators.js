@@ -1,6 +1,6 @@
 function generatePESEL(sex) {
   const weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
-  const date = getRandomDate();
+  const date = generateRandomDate();
   const fullYear = date.getFullYear();
   const y = fullYear % 100;
   let m = date.getMonth()+1;
@@ -19,15 +19,15 @@ function generatePESEL(sex) {
   let numbers = [Math.floor(y/10), y%10, Math.floor(m/10), m%10, Math.floor(d/10), d%10];
 
   for (let i = numbers.length; i < weights.length - 1; i++) {
-    numbers[i] = getRandomDigit();
+    numbers[i] = generateRandomDigit();
   }
 
   if (sex === 'M') {
-    numbers[weights.length - 1] = getRandomDigitFrom('13579');
+    numbers[weights.length - 1] = generateRandomDigitFrom('13579');
   } else if (sex === 'F') {
-    numbers[weights.length - 1] = getRandomDigitFrom('02468');
+    numbers[weights.length - 1] = generateRandomDigitFrom('02468');
   } else {
-    numbers[weights.length - 1] = getRandomDigit();
+    numbers[weights.length - 1] = generateRandomDigit();
   }
       
   let controlNumber = 0;
@@ -48,18 +48,18 @@ function generatePESEL(sex) {
   return pesel; 
 };
 
-function getRandomDate() {
+function generateRandomDate() {
   const from = new Date(1800, 0, 1).getTime();
   const to = new Date(2299, 0, 1).getTime();
 
   return new Date(from + Math.random() * (to - from));
 };
 
-function getRandomDigit() {
+function generateRandomDigit() {
   return Math.floor(Math.random() * 10);
 };
   
-function getRandomDigitFrom(digits = '0123456789') {
+function generateRandomDigitFrom(digits = '0123456789') {
   const i = Math.floor(Math.random() * digits.length);
   return digits[i];
 };
@@ -80,4 +80,24 @@ function generateLoremIpsumParagraph() {
 
 function generateLoremIpsumSentence() {
   return generateLoremIpsum().split('.')[0];
+};
+
+function generateRandomNumberOfLength(base = generateRandomDigit(), length = 0) {
+  base = String(base);
+
+  if (length <= 1) {
+    return base;
+  }
+  
+  base += generateRandomDigit();
+
+  return generateRandomNumberOfLength(base, length-1);
+};
+
+function generateMobilePhoneNumber() {
+  return generateRandomNumberOfLength(undefined, 9);
+};
+
+function generateLandlinePhoneNumber() {
+  return generateRandomNumberOfLength(undefined, 7);
 };
