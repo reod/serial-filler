@@ -151,5 +151,40 @@ function generateREGON(length = 9) {
 
   regon[weights.length + 1] = ((sum % 11 == 10) ? 0 : sum % 11);
 
-  return regon.join("");
+  return regon.join('');
+};
+
+function shuffleArray(array = []) {
+  let shuffled = array.slice();
+  let counter = shuffled.length;
+
+  while (counter > 0) {
+    let index = Math.floor(Math.random() * counter);
+    counter--;
+
+    [shuffled[counter], shuffled[index]] = [shuffled[index], shuffled[counter]];
+  };
+
+  return shuffled;
+};
+
+
+function generateNIP() {
+  const weights = [6, 5, 7, 2, 3, 4, 5, 6, 7];
+  let numbers = [0, 1, 2, 3, 4,5 ,6 ,7 ,8 ,9];
+  let nip = [], sum;
+  
+  do {
+    numbers = shuffleArray(numbers);
+    nip = numbers.slice(0, 9);
+    sum = 0;
+
+    for (let i = 0; i < weights.length; i++) {
+      sum += nip[i] * weights[i];
+    }
+
+    nip[9] = (sum % 11);
+  } while (nip[9] === 10);
+
+  return nip.join('');
 };

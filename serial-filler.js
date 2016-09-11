@@ -38,6 +38,11 @@ const serialFiller = {
         },
 
     {
+      title: 'NIP',
+      onclick: generateNIP.bind(null)
+    },
+
+    {
       id: 'phones',
       title: 'Numer telefonu'
     },
