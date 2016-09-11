@@ -3,9 +3,19 @@ const serialFiller = {
   name: 'Serial Filler',
 
   supportedGenerators: [
+    
+    {
+      id: 'suggestion',
+      title: 'brak sugestii, wybierz z listy:',
+      enabled: false,
+      onclick: () => false
+    },
+
     {
       id: 'pesels',
-      title: 'PESEL'
+      title: 'PESEL',
+      onclick: generatePESEL,
+      _custom: { forClass: 'pesel' }
     },
 
         {
@@ -23,6 +33,8 @@ const serialFiller = {
     {
       id: 'regons',
       title: 'REGON',
+      onclick: generateREGON.bind(null, 9),
+      _custom: { forClass: 'regon' }
     },
 
         {
@@ -39,12 +51,20 @@ const serialFiller = {
 
     {
       title: 'NIP',
-      onclick: generateNIP.bind(null)
+      onclick: generateNIP.bind(null),
+      _custom: { forClass: 'nip' }
     },
 
     {
       title: 'Nr dowodu osobistego',
-      onclick: generatePLIDNumber.bind(null)
+      onclick: generatePLIDNumber.bind(null),
+      _custom: { forClass: 'nr-dowodu' }
+    },
+
+    {
+      title: 'KRS',
+      onclick: generateKRS.bind(null),
+      _custom: { forClass: 'krs' }
     },
 
     {
@@ -55,19 +75,21 @@ const serialFiller = {
         {
           parentId: 'phones',
           title: 'domowy jako 263 43 45',
-          onclick: createRandomPatternInFormat.bind(null, 'ddd dd dd')
+          onclick: createRandomPatternInFormat.bind(null, 'ddd dd dd'),
+          _custom: { forClass: 'landline-phone' }
         },
 
         {
           parentId: 'phones',
           title: 'domowy jako 2634345',
-          onclick: createRandomPatternInFormat.bind(null, '+ddddddd')
+          onclick: createRandomPatternInFormat.bind(null, 'ddddddd')
         },
 
         {
           parentId: 'phones',
           title: 'komórka jako 505 543 345',
-          onclick: createRandomPatternInFormat.bind(null, 'ddd ddd ddd')
+          onclick: createRandomPatternInFormat.bind(null, 'ddd ddd ddd'),
+          _custom: { forClass: 'mobile-phone' }
         },
 
         {
@@ -78,7 +100,8 @@ const serialFiller = {
 
     {
       title: 'Email',
-      onclick: generateRandomEmail
+      onclick: generateRandomEmail,
+      _custom: { forClass: 'email' }
     },
 
     {
@@ -99,25 +122,77 @@ const serialFiller = {
   
   init() {
     this.addOptionsToContextMenu();
+    this.initSuggestionMechanism();
   },
 
   addOptionsToContextMenu() {
     this.supportedGenerators.forEach(this.createContextMenuOption, this);
   },
 
-  createContextMenuOption(descriptor) {
-    chrome.contextMenus.create(Object.assign({}, descriptor, {
-        type: 'normal',
-        contexts: ['editable'],
-        onclick: (info, tab) => {
-          chrome.tabs.sendMessage(tab.id, {
-            value: descriptor.onclick()
-          });
+  initSuggestionMechanism() {
+    chrome.runtime.onMessage.addListener(request => {
+      if (!request || !request.clickedElInfo) {
+        return;
+      }
+
+      const suggestionDescriptor = this.getSugestionDescriptor(request.clickedElInfo);
+      chrome.contextMenus.update('suggestion', suggestionDescriptor);
+    });
+  },
+
+  createContextMenuOption(customDescriptor) {
+    const descriptor = this.customDescriptorToNative(customDescriptor);
+    chrome.contextMenus.create(descriptor);
+  },
+
+  customDescriptorToNative(descriptor) {
+    const itemDescriptor = Object.assign({}, descriptor, {
+      type: 'normal',
+      contexts: ['editable'],
+      onclick: (info, tab) => {
+        chrome.tabs.sendMessage(tab.id, {
+          value: descriptor.onclick()
+        });
+      }
+    });
+
+    delete itemDescriptor._custom;
+
+    return itemDescriptor;
+  },
+
+  getSugestionDescriptor(elementInfo) {
+    let suggestionDescriptor;
+
+    const descriptorByClassName = this.supportedGenerators.find(menuItem => {
+      const bindings = menuItem._custom;
+        if (!bindings || !bindings.forClass) {
+          return false;
         }
-      })
-    );
+
+        return elementInfo.classList.find(className => {
+          return className.includes(bindings.forClass);
+        });
+    });
+
+    if (descriptorByClassName) {
+      suggestionDescriptor = Object.assign({}, descriptorByClassName);
+      suggestionDescriptor.title = `sugestia: ${suggestionDescriptor.title}`;
+      suggestionDescriptor.enabled = true;
+    } else {
+      suggestionDescriptor = this.supportedGenerators.find(g => g.id === 'suggestion');
+      suggestionDescriptor.enabled = false;
+    }
+
+    suggestionDescriptor = this.customDescriptorToNative(suggestionDescriptor);
+    // don't update id or set parentId
+    delete suggestionDescriptor.id;
+    delete suggestionDescriptor.parentId;
+
+    return suggestionDescriptor;
   }
 };
 
+//https://jsfiddle.net/todv47yz/
 
 serialFiller.init();

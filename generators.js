@@ -126,7 +126,6 @@ function generateRandomEmail() {
   const country = 's'.repeat(generateRandomNumberBetween(2, 3));
 
   const emailPattern = `${user}@${domain}.${country}`;
-  console.log(emailPattern)
 
   return createRandomPatternInFormat(emailPattern);
 };
@@ -212,4 +211,15 @@ function generatePLIDNumber() {
   idArr[3] = sum % 10;
 
   return idArr.join('');  
+};
+
+function generateKRS() {
+  const leadingZeros = generateRandomNumberBetween(1, 5);
+  let krs = '0'.repeat(leadingZeros);
+
+  while (krs.length < 10) {
+    krs += generateRandomDigit();
+  }
+
+  return krs;
 };

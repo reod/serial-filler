@@ -12,6 +12,9 @@ document.addEventListener('mousedown', e => {
   let tagName = e.target.tagName.toLowerCase();
   if (tagName === 'textarea' || tagName === 'input') {
     clickedEl = e.target;
+    chrome.runtime.sendMessage({ clickedElInfo: {
+      classList: [].slice.call(clickedEl.classList)
+    }});
   }
 });
 
