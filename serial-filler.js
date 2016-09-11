@@ -43,6 +43,11 @@ const serialFiller = {
     },
 
     {
+      title: 'Nr dowodu osobistego',
+      onclick: generatePLIDNumber.bind(null)
+    },
+
+    {
       id: 'phones',
       title: 'Numer telefonu'
     },

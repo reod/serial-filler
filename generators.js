@@ -188,3 +188,28 @@ function generateNIP() {
 
   return nip.join('');
 };
+
+function generatePLIDNumber() {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const weights = [7, 3, 1, 0, 7, 3, 1, 7, 3];
+  let idArr = [];
+  let sum = 0;
+
+  idArr[0] = 'A';
+  sum += ((letters.indexOf(idArr[0]) + 10) * weights[0]);
+  
+  idArr[1] = shuffleArray(letters)[0];
+  sum += ((letters.indexOf(idArr[1]) + 10) * weights[1]);
+  
+  idArr[2] = shuffleArray(letters)[0];
+  sum += ((letters.indexOf(idArr[2]) + 10) * weights[2]);
+  
+  for(let i = 4; i <= 8; i++) {
+    idArr[i] = Math.floor(Math.random() * 10);
+    sum += idArr[i] * weights[i];
+  }
+  
+  idArr[3] = sum % 10;
+
+  return idArr.join('');  
+};
