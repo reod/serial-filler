@@ -21,6 +21,23 @@ const serialFiller = {
         },
 
     {
+      id: 'regons',
+      title: 'REGON',
+    },
+
+        {
+          parentId: 'regons',
+          title: 'REGON 9 znakwów',
+          onclick: generateREGON.bind(null, 9)
+        },
+
+        {
+          parentId: 'regons',
+          title: 'REGON 14 znakwów',
+          onclick: generateREGON.bind(null, 14)
+        },
+
+    {
       id: 'phones',
       title: 'Numer telefonu'
     },

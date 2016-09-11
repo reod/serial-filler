@@ -130,3 +130,26 @@ function generateRandomEmail() {
 
   return createRandomPatternInFormat(emailPattern);
 };
+
+function generateREGON(length = 9) {
+  if (length !== 9 && length !== 14) {
+    throw new Error('REGON lenght must be 9 or 14.');
+  }
+
+  let weights, regon = [], sum = 0;
+  
+  if(length == 9) {
+    weights = [8, 9, 2, 3, 4, 5, 6, 7];
+  } else {
+    weights = [2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8];
+  }
+  
+  for (let i = 0; i < weights.length; i++) {
+    regon[i] = Number(generateRandomDigit());
+    sum += regon[i] * weights[i];
+  }
+
+  regon[weights.length + 1] = ((sum % 11 == 10) ? 0 : sum % 11);
+
+  return regon.join("");
+};
