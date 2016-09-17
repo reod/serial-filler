@@ -15,7 +15,7 @@ const serialFiller = {
       id: 'pesels',
       title: 'PESEL',
       onclick: generatePESEL,
-      _custom: { forClass: 'pesel' }
+      _custom: { keywords: ['pesel'] }
     },
 
         {
@@ -34,7 +34,7 @@ const serialFiller = {
       id: 'regons',
       title: 'REGON',
       onclick: generateREGON.bind(null, 9),
-      _custom: { forClass: 'regon' }
+      _custom: { keywords: ['regon'] }
     },
 
         {
@@ -52,19 +52,19 @@ const serialFiller = {
     {
       title: 'NIP',
       onclick: generateNIP.bind(null),
-      _custom: { forClass: 'nip' }
+      _custom: { keywords: ['nip'] }
     },
 
     {
       title: 'Nr dowodu osobistego',
       onclick: generatePLIDNumber.bind(null),
-      _custom: { forClass: 'nr-dowodu' }
+      _custom: { keywords: ['nr-dowodu'] }
     },
 
     {
       title: 'KRS',
       onclick: generateKRS.bind(null),
-      _custom: { forClass: 'krs' }
+      _custom: { keywords: ['krs'] }
     },
 
     {
@@ -76,7 +76,7 @@ const serialFiller = {
           parentId: 'phones',
           title: 'domowy jako 263 43 45',
           onclick: createRandomPatternInFormat.bind(null, 'ddd dd dd'),
-          _custom: { forClass: 'landline-phone' }
+          _custom: { keywords: ['landline-phone'] }
         },
 
         {
@@ -89,7 +89,7 @@ const serialFiller = {
           parentId: 'phones',
           title: 'komórka jako 505 543 345',
           onclick: createRandomPatternInFormat.bind(null, 'ddd ddd ddd'),
-          _custom: { forClass: 'mobile-phone' }
+          _custom: { keywords: ['mobile-phone'] }
         },
 
         {
@@ -101,7 +101,7 @@ const serialFiller = {
     {
       title: 'Email',
       onclick: generateRandomEmail,
-      _custom: { forClass: 'email' }
+      _custom: { keywords: ['email'] }
     },
 
     {
@@ -131,12 +131,13 @@ const serialFiller = {
 
   initSuggestionMechanism() {
     chrome.runtime.onMessage.addListener(request => {
-      if (!request || !request.clickedElInfo) {
+      if (!request || !request.suggestionKeywords) {
         return;
       }
 
-      const suggestionDescriptor = this.getSugestionDescriptor(request.clickedElInfo);
-      chrome.contextMenus.update('suggestion', suggestionDescriptor);
+      // FIXME: update is noticeable after second menu opening
+      const suggestionDescriptor = this.getSugestionDescriptor(request.suggestionKeywords);
+      chrome.contextMenus.update('suggestion', suggestionDescriptor, onUpdated);  
     });
   },
 
@@ -161,26 +162,36 @@ const serialFiller = {
     return itemDescriptor;
   },
 
-  getSugestionDescriptor(elementInfo) {
+  getSugestionDescriptor(suggestionKeywords) {
     let suggestionDescriptor;
 
-    const descriptorByClassName = this.supportedGenerators.find(menuItem => {
-      const bindings = menuItem._custom;
-        if (!bindings || !bindings.forClass) {
-          return false;
-        }
+    const suggestion = this.supportedGenerators.find(descriptor => {
+      if (!descriptor._custom) {
+        return false;
+      }
+    
+      if (!descriptor._custom.keywords) {
+        return false;
+      }
 
-        return elementInfo.classList.find(className => {
-          return className.includes(bindings.forClass);
-        });
+      const keywords = descriptor._custom.keywords;
+      const match = suggestionKeywords.find(
+        suggestion => keywords.find(
+          keyword => suggestion.includes(keyword)
+        )
+      );
+
+      return match;
     });
 
-    if (descriptorByClassName) {
-      suggestionDescriptor = Object.assign({}, descriptorByClassName);
+    if (suggestion) {
+      suggestionDescriptor = Object.assign({}, suggestion);
       suggestionDescriptor.title = `sugestia: ${suggestionDescriptor.title}`;
       suggestionDescriptor.enabled = true;
     } else {
-      suggestionDescriptor = this.supportedGenerators.find(g => g.id === 'suggestion');
+      suggestionDescriptor = this.supportedGenerators.find(
+        generator => generator.id === 'suggestion'
+      );
       suggestionDescriptor.enabled = false;
     }
 
@@ -192,7 +203,5 @@ const serialFiller = {
     return suggestionDescriptor;
   }
 };
-
-//https://jsfiddle.net/todv47yz/
 
 serialFiller.init();
