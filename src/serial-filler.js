@@ -137,7 +137,7 @@ const serialFiller = {
 
       // FIXME: update is noticeable after second menu opening
       const suggestionDescriptor = this.getSugestionDescriptor(request.suggestionKeywords);
-      chrome.contextMenus.update('suggestion', suggestionDescriptor, onUpdated);  
+      chrome.contextMenus.update('suggestion', suggestionDescriptor);  
     });
   },
 
