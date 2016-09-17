@@ -1,7 +1,11 @@
+// placeholder for clicket element
 let clickedEl = null;
 
+document.addEventListener('mousedown', setClickedElAndInfo);
+chrome.runtime.onMessage.addListener(setClickedElValue);
 
-document.addEventListener('mousedown', e => {
+
+function setClickedElAndInfo(e) {
   clickedEl = null;
 
   // test only right click
@@ -12,16 +16,18 @@ document.addEventListener('mousedown', e => {
   let tagName = e.target.tagName.toLowerCase();
   if (tagName === 'textarea' || tagName === 'input') {
     clickedEl = e.target;
-    chrome.runtime.sendMessage({ clickedElInfo: {
+    const clickedElInfo = {
       classList: [].slice.call(clickedEl.classList)
-    }});
-  }
-});
+    };
 
-chrome.runtime.onMessage.addListener(request => {
+    chrome.runtime.sendMessage({ clickedElInfo });
+  }
+};
+
+function setClickedElValue(request) {
   if (!clickedEl || !request || !request.value) {
     return;
   }
 
   clickedEl.value = request.value;
-});
+};
