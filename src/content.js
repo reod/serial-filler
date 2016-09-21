@@ -11,6 +11,9 @@ function l() {
 // placeholder for clicket element
 let clickedEl = null;
 
+// placeholder for fields that can be autofilles
+let fieldsToAutofill = null;
+
 document.addEventListener('mousedown', setClickedElement);
 // don't know why, but when this is added, suggestion just work
 // without second listener suggestion title is rendered as previous one 
@@ -87,22 +90,48 @@ function setClickedElementValue(value) {
 };
 
 function suggestAutoFilling() {
-  const fields = document.querySelectorAll('input, textarea');
+  fieldsToAutofill = Array.from(document.querySelectorAll('input, textarea'));
 
-  if (!fields.length) {
+  if (!fieldsToAutofill.length) {
     return;
   }
 
-  const fill = prompt('Suggest serial filling?');
+  const keywordsForFields = fieldsToAutofill.map(getSuggestionKeywords);
 
-  if (!fill) {
-    return;
-  }
+  const question = document.createElement('div');
+  question.setAttribute('style', `
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    cursor: pointer;
+  `);
 
+  question.addEventListener('click', () => {
+    sendAutofillRequest(keywordsForFields);
+  });
+
+  const itemsAmount = document.createElement('span');
+  itemsAmount.textContent = fieldsToAutofill.length;
+
+  question.appendChild(itemsAmount);
+  document.body.appendChild(question);
+};
+
+function sendAutofillRequest(fields) {
   const message = { action: 'AUTOFILL', fields };
   chrome.runtime.sendMessage(message, onAutofillResponse);
 };
 
 function onAutofillResponse(response) {
-  l('got', response);
+  l('got suggestion response', response);
+
+  const suggestions = response.suggestions;
+  fieldsToAutofill.forEach((field, index) => {
+    if (suggestions[index].value) {
+      field.value = suggestions[index].value;
+    }
+  });
 };

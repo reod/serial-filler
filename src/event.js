@@ -301,8 +301,8 @@ function findSuggestionByKeywords(keywords) {
       return false;
     }
 
-    const match = keywords.find(keyword => {
-      return binding.keywords.includes(keyword);
+    const match = binding.keywords.find(bindingKeyword => {
+      return keywords.find(keyword => keyword.includes(bindingKeyword));
     });
 
     return match;
@@ -312,6 +312,28 @@ function findSuggestionByKeywords(keywords) {
 };
 
 function answerAutofillRequest(fields, sendResponse) {
-  l('got autofill request');
-  sendResponse({ fields: [1, 2] });
+  l('got autofill request', fields);
+  const suggestions = fields
+    .map(findSuggestionByKeywords)
+    .map(binding => {
+      let suggestion = {};
+
+      if (!binding) {
+        return suggestion;
+      }
+
+      if (!binding.generator) {
+        return suggestion;
+      }
+
+      suggestion.generator = binding.generator.name;
+      suggestion.value = binding.generator();
+
+      return suggestion;
+    });
+
+
+
+  l('found suggestion', suggestions);
+  sendResponse({ suggestions });
 };
