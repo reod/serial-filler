@@ -83,15 +83,14 @@ const menuBindings = [
   {
     id: 'phones',
     title: 'Numer telefonu',
-    keywords: ['phone'],
   },
 
   {
     id: 'phone_a',
     parentId: 'phones',
-    title: 'Numer telefonu 504 234 213',
-    generator: createRandomPatternInFormat.bind(null, 'ddd ddd ddd'),
-    keywords: ['mobile-phone'],
+    title: 'Numer telefonu 504234213',
+    generator: createRandomPatternInFormat.bind(null, 'ddddddddd'),
+    keywords: ['phone', 'mobile-phone'],
   },
 
   {
@@ -99,14 +98,6 @@ const menuBindings = [
     parentId: 'phones',
     title: 'Numer telefonu jako 2549923',
     generator: createRandomPatternInFormat.bind(null, 'ddddddd'),
-    keywords: ['landline-phone'],
-  },
-
-  {
-    id: 'phone_c',
-    parentId: 'phones',
-    title: 'Numer telefonu jako 254 99 23',
-    generator: createRandomPatternInFormat.bind(null, 'ddd dd dd'),
     keywords: ['landline-phone'],
   },
 
@@ -293,11 +284,9 @@ function findSuggestionByKeywords(keywords) {
       return false;
     }
 
-    const match = keywords.find(
-      suggestion => keywords.find(
-        keyword => suggestion.includes(keyword)
-      )
-    );
+    const match = keywords.find(keyword => {
+      return binding.keywords.includes(keyword);
+    });
 
     return match;
   });
