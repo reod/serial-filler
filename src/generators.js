@@ -223,3 +223,7 @@ function generateKRS() {
 
   return krs;
 };
+
+function generateZipCode() {
+  return createRandomPatternInFormat('dd-ddd');
+};

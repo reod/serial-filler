@@ -109,6 +109,13 @@ const menuBindings = [
   },
 
   {
+    id: 'zip_code',
+    title: 'Kod pocztowy',
+    generator: generateZipCode,
+    keywords: ['zipcode', 'zip_code', 'zip code'],
+  },
+
+  {
     id: 'sentence',
     title: 'Jedno zdanie',
     generator: generateLoremIpsumSentence,
