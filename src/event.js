@@ -116,6 +116,13 @@ const menuBindings = [
   },
 
   {
+    id: 'city',
+    title: 'Nazwa miasta',
+    generator: generateCity,
+    keywords: ['city', 'miasto'],
+  },
+
+  {
     id: 'sentence',
     title: 'Jedno zdanie',
     generator: generateLoremIpsumSentence,

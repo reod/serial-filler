@@ -227,3 +227,22 @@ function generateKRS() {
 function generateZipCode() {
   return createRandomPatternInFormat('dd-ddd');
 };
+
+function generateCity() {
+  const twoPart = (Math.floor(Math.random()*10))%2;
+  let cityPattern = 's'.repeat(generateRandomNumberBetween(6, 15));
+
+  if (twoPart) {
+    cityPattern += ' ';
+    cityPattern += 's'.repeat(generateRandomNumberBetween(6, 15));
+  } 
+
+  let city = createRandomPatternInFormat(cityPattern);
+  city = city.split(' ').map(capitalizeFirstLetter).join(' ');
+
+  return city;
+};
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
