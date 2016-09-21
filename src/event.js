@@ -241,10 +241,13 @@ function getGeneratorFunction(id) {
 };
 
 function setOnContextMessageListener() {
-  chrome.runtime.onMessage.addListener(request => {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch(request.action) {
       case 'SET_SUGGESTION':
         setSuggestionByKeywords(request.keywords);
+        break;
+      case 'AUTOFILL':
+        answerAutofillRequest(request.fields, sendResponse);
         break;
       default:
         l('unknown action', request.action);
@@ -306,4 +309,9 @@ function findSuggestionByKeywords(keywords) {
   });
 
   return suggestion;
+};
+
+function answerAutofillRequest(fields, sendResponse) {
+  l('got autofill request');
+  sendResponse({ fields: [1, 2] });
 };

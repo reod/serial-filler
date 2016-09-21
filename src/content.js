@@ -16,6 +16,7 @@ document.addEventListener('mousedown', setClickedElement);
 // without second listener suggestion title is rendered as previous one 
 document.addEventListener('contextmenu', someDelay);
 chrome.runtime.onMessage.addListener(onContextMessage);
+suggestAutoFilling();
 
 
 function someDelay(e) {
@@ -83,4 +84,25 @@ function onContextMessage(request) {
 function setClickedElementValue(value) {
   l('setting', value)
   clickedEl.value = value;
+};
+
+function suggestAutoFilling() {
+  const fields = document.querySelectorAll('input, textarea');
+
+  if (!fields.length) {
+    return;
+  }
+
+  const fill = prompt('Suggest serial filling?');
+
+  if (!fill) {
+    return;
+  }
+
+  const message = { action: 'AUTOFILL', fields };
+  chrome.runtime.sendMessage(message, onAutofillResponse);
+};
+
+function onAutofillResponse(response) {
+  l('got', response);
 };
