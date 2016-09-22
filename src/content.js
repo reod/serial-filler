@@ -100,7 +100,7 @@ function suggestAutoFilling() {
 
   const question = document.createElement('div');
   question.setAttribute('style', `
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     width: 20px;

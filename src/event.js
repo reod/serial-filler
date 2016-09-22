@@ -123,6 +123,13 @@ const menuBindings = [
   },
 
   {
+    id: 'name',
+    title: 'Imię, nazwisko lub nick',
+    generator: generateName,
+    keywords: ['name', 'nick', 'login', 'user', 'imie', 'ksywa'],
+  },
+
+  {
     id: 'sentence',
     title: 'Jedno zdanie',
     generator: generateLoremIpsumSentence,

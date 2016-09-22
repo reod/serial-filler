@@ -246,3 +246,11 @@ function generateCity() {
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+function generateName(length = 7) {
+  const namePattern = 's'.repeat(generateRandomNumberBetween(4, 10));
+  let name = createRandomPatternInFormat(namePattern);
+  name = capitalizeFirstLetter(name);
+
+  return name;
+};
