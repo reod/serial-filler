@@ -65,11 +65,24 @@ function getSuggestionKeywords(el) {
   // add type
   keywords.push(el.type);
 
+  // add role
+  keywords.push(el.getAttribute('role'));
+
+  // add aria-labelledby
+  keywords.push(el.getAttribute('aria-labelledby'));
+
   // normalize
-  keywords = keywords.map(k => String.prototype.toLowerCase.call(k));
+  keywords = keywords
+    .filter(k => !!k)
+    .map(k => {
+      k = String(k);
+      return k.toLowerCase(k);
+    });
 
   // only unique
   keywords = [...new Set(keywords)];
+
+  l('keywords', keywords)
 
   return keywords;
 };
