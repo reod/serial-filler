@@ -52,8 +52,9 @@ function getSuggestionKeywords(el) {
 
   // collect attributes values
   const attributes = [
-    'id', 'type', 'role', 
-    'aria-labelledby', 'title', 'type'
+    'id', 'type', 'role', 'alt', 'name',
+    'aria-labelledby', 'title', 'type',
+    'placeholder',
   ];
 
   attributes.forEach(attribute => {
