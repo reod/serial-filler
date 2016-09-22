@@ -112,25 +112,23 @@ function suggestAutoFilling() {
   const keywordsForFields = fieldsToAutofill.map(getSuggestionKeywords);
 
   const question = document.createElement('div');
-  question.setAttribute('style', `
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    cursor: pointer;
-  `);
-
-  question.addEventListener('click', () => {
-    sendAutofillRequest(keywordsForFields);
-  });
+  question.classList.add('serial_filler_question_wrapper');
+  question.addEventListener('click', () => { sendAutofillRequest(keywordsForFields); });
 
   const itemsAmount = document.createElement('span');
-  itemsAmount.textContent = fieldsToAutofill.length;
+  itemsAmount.classList.add('serial_filler_question_label');
+  itemsAmount.textContent = `Psst..., uzupełnić ci ${fieldsToAutofill.length} pól? SF`;
 
   question.appendChild(itemsAmount);
   document.body.appendChild(question);
+
+  setTimeout(() => {
+    question.classList.add('opened');
+  }, 1000);
+
+  setTimeout(() => {
+    question.classList.remove('opened');
+  }, 6000);
 };
 
 function sendAutofillRequest(fields) {

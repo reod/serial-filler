@@ -1,0 +1,20 @@
+.serial_filler_question_wrapper {
+  font-family: 'Verdana', sans-serif;
+  font-size: 12px;
+  padding: 5px;
+  color: #666;
+  position: fixed;
+  box-shadow: 0px 0px 29px -5px rgba(0,0,0,0.75);
+  bottom: 0;
+  left: 0;
+  background-color: #FFF;
+  cursor: pointer;
+  transform: translateX(-87%);
+  transition: transform 300ms;
+}
+
+.serial_filler_question_wrapper:hover,
+.serial_filler_question_wrapper.opened {
+  transform: translateX(0);
+  background: #f8fbfe;
+}
