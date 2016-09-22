@@ -50,33 +50,29 @@ function setClickedElement(e) {
 function getSuggestionKeywords(el) {
   let keywords = [];
 
+  // collect attributes values
+  const attributes = [
+    'id', 'type', 'role', 
+    'aria-labelledby', 'title', 'type'
+  ];
+
+  attributes.forEach(attribute => {
+    keywords.push(el.getAttribute(attribute));
+  });
+
   // add class names
   keywords.push(...el.classList);
-  
-  // add id
-  if (el.id) {
-    keywords.push(el.id);  
-  }
   
   // add data attributes names
   const attrsNames = Object.keys(el.dataset);
   keywords.push(...attrsNames);
 
-  // add type
-  keywords.push(el.type);
-
-  // add role
-  keywords.push(el.getAttribute('role'));
-
-  // add aria-labelledby
-  keywords.push(el.getAttribute('aria-labelledby'));
-
   // normalize
   keywords = keywords
-    .filter(k => !!k)
-    .map(k => {
-      k = String(k);
-      return k.toLowerCase(k);
+    .filter(keyword => !!keyword)
+    .map(keyword => {
+      keyword = String(keyword);
+      return keyword.toLowerCase(keyword);
     });
 
   // only unique
