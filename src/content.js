@@ -62,6 +62,9 @@ function getSuggestionKeywords(el) {
   const attrsNames = Object.keys(el.dataset);
   keywords.push(...attrsNames);
 
+  // add type
+  keywords.push(el.type);
+
   // normalize
   keywords = keywords.map(k => String.prototype.toLowerCase.call(k));
 
