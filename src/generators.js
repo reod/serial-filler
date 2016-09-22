@@ -1,3 +1,7 @@
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 function generatePESEL(sex) {
   const weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
   const date = generateRandomDate();
@@ -224,6 +228,14 @@ function generateKRS() {
   return krs;
 };
 
+function generateStreet() {
+  const streetPattern = 's'.repeat(generateRandomNumberBetween(7, 15));
+  let street = createRandomPatternInFormat(streetPattern);
+  street = capitalizeFirstLetter(street);
+
+  return street;
+};
+
 function generateZipCode() {
   return createRandomPatternInFormat('dd-ddd');
 };
@@ -243,8 +255,16 @@ function generateCity() {
   return city;
 };
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+function generateAddress() {
+  const city = generateCity();
+  const street = generateStreet();
+  const zipCode = generateZipCode();
+  const streetNr = generateRandomNumberBetween(1, 400);
+  const buildingNr = generateRandomNumberBetween(1, 400);
+
+  return `${street} ${streetNr}, ${buildingNr},
+    ${zipCode}, ${city}
+  `;
 };
 
 function generateName(length = 7) {
@@ -254,3 +274,5 @@ function generateName(length = 7) {
 
   return name;
 };
+
+

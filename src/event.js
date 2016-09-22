@@ -109,17 +109,42 @@ const menuBindings = [
   },
 
   {
+    id: 'addresses',
+    title: 'Adres',
+    generator: generateAddress,
+    keywords: ['address', 'adres', 'zamieszkanie', 'meldunek'],
+  },
+
+  {
+    id: 'street',
+    parentId: 'addresses',
+    title: 'Ulica',
+    generator: generateStreet,
+    keywords: ['street', 'ulica', 'avenue', 'aleja'],
+  },
+
+  {
+    id: 'city',
+    parentId: 'addresses',
+    title: 'Nazwa miasta',
+    generator: generateCity,
+    keywords: ['city', 'miasto'],
+  },
+
+  {
     id: 'zip_code',
+    parentId: 'addresses',
     title: 'Kod pocztowy',
     generator: generateZipCode,
     keywords: ['zipcode', 'zip_code', 'zip code'],
   },
 
   {
-    id: 'city',
-    title: 'Nazwa miasta',
-    generator: generateCity,
-    keywords: ['city', 'miasto'],
+    id: 'address',
+    parentId: 'addresses',
+    title: 'Pełny adres',
+    generator: generateAddress,
+    keywords: ['address', 'zamieszkanie'],
   },
 
   {
