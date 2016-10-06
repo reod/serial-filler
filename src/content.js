@@ -54,7 +54,7 @@ function getSuggestionKeywords(el) {
   const attributes = [
     'id', 'type', 'role', 'alt', 'name',
     'aria-labelledby', 'title', 'type',
-    'placeholder',
+    'placeholder', 'label'
   ];
 
   attributes.forEach(attribute => {
@@ -68,9 +68,12 @@ function getSuggestionKeywords(el) {
   const attrsNames = Object.keys(el.dataset);
   keywords.push(...attrsNames);
 
+  // add value of label
+  keywords.push(...getKeywordsFromLabels(el.labels));
+
   // normalize
   keywords = keywords
-    .filter(keyword => !!keyword)
+    .filter(Boolean)
     .map(keyword => {
       keyword = String(keyword);
       return keyword.toLowerCase(keyword);
@@ -82,6 +85,12 @@ function getSuggestionKeywords(el) {
   l('keywords', keywords)
 
   return keywords;
+};
+
+function getKeywordsFromLabels(labels = []) {
+  return Array.from(labels)
+    .map(label => label.innerText.trim())
+    .filter(Boolean);  
 };
 
 function onContextMessage(request) {
