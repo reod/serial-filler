@@ -71,6 +71,14 @@ function getSuggestionKeywords(el) {
   // add value of label
   keywords.push(...getKeywordsFromLabels(el.labels));
 
+  // collect keywords from parent only when el is editable
+  const elTag = el.nodeName.toLowerCase();
+  const editableTags = ['input', 'textarea'];
+
+  if (editableTags.includes(elTag)) {
+    keywords.push(...getSuggestionKeywords(el.parentNode));
+  } 
+
   // normalize
   keywords = keywords
     .filter(Boolean)
