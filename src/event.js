@@ -136,7 +136,7 @@ const menuBindings = [
     parentId: 'addresses',
     title: 'Kod pocztowy',
     generator: generateZipCode,
-    keywords: ['zipcode', 'zip_code', 'zip code'],
+    keywords: ['zipcode', 'zip_code'],
   },
 
   {
@@ -158,20 +158,20 @@ const menuBindings = [
     id: 'sentence',
     title: 'Jedno zdanie',
     generator: generateLoremIpsumSentence,
-    keywords: ['sentence'],
+    keywords: ['sentence','bio', 'interests'],
   },
 
   {
     id: 'paragraph',
     title: 'Cały akapit',
     generator: generateLoremIpsumParagraph,
-    keywords: ['paragraph'],
+    keywords: ['paragraph', 'comment'],
   },
   {
     id: 'many_paragraphs',
     title: 'Kilka akapitów',
     generator: generateLoremIpsum,
-    keywords: ['email'],
+    keywords: [],
   },
 
 ];
