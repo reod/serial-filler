@@ -90,7 +90,7 @@ function getSuggestionKeywords(el) {
   // only unique
   keywords = [...new Set(keywords)];
 
-  l('keywords', keywords)
+  l('keywords', keywords);
 
   return keywords;
 };
