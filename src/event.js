@@ -182,14 +182,53 @@ const menuBindings = [
 let currentSuggestion = null;
 
 
-
 // create menu
-createContextMenu(menuBindings);
+setTabsListener();
 setMenuOnClickedListener();
+setIconClickListener();
 setOnContextMessageListener();
+createContextMenu(menuBindings);
 
 ///////////////////////////////////////////////////////
 // function definitions:
+
+function setTabsListener() {
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'loading') {
+      updateBadge(0);
+      return;
+    }
+
+    if (changeInfo.status === 'complete') {
+      chrome.tabs.get(tabId, tab => {
+        if (tab.url === 'chrome://newtab/') {
+          updateBadge(0);
+        } else {
+          l('tab', tabId, 'updated; sending page report request');
+          chrome.tabs.sendMessage(tabId, {
+            action: 'GIVE_PAGE_REPORT',
+          }, onPageReport);
+        }
+      });
+    }
+  });
+
+  chrome.tabs.onActivated.addListener(activeInfo => {
+    const { tabId } = activeInfo;
+
+    l('tab', tabId, 'is active; sending page report request');
+    chrome.tabs.sendMessage(tabId, {
+      action: 'GIVE_PAGE_REPORT',
+    }, onPageReport);
+  });
+};
+
+function updateBadge(amount) {
+  const badge = amount ? String(amount) : '';
+  const title = badge ? `Autofill ${amount} fields.` : 'No fields to autofill.';
+  chrome.browserAction.setBadgeText({ text: badge });
+  chrome.browserAction.setTitle({ title });
+};
 
 function createContextMenu(descriptors = []) {
   descriptors.forEach(descriptor => {
@@ -259,6 +298,12 @@ function setMenuOnClickedListener() {
   });
 };
 
+function setIconClickListener() {
+  chrome.browserAction.onClicked.addListener(tab => {
+    
+  });
+}
+
 function getGeneratorFunction(id) {
   if (id === 'suggestion' && currentSuggestion) {
     return currentSuggestion.generator || noop;
@@ -286,6 +331,19 @@ function setOnContextMessageListener() {
         break;
     }
   });
+};
+
+function onPageReport(report) {
+  l('page report:', report);
+
+  // TODO: find out why and when is empty
+  if (!report) {
+    updateBadge(0);
+    return;
+  }
+
+  const { fields: { length: amount } } = report;
+  updateBadge(amount);
 };
 
 function setSuggestionByKeywords(keywords = []) {

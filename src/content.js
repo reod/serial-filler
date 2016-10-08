@@ -8,6 +8,9 @@ function l() {
   }
 };
 
+// HTML elements that can be autofill
+const EDITABLE_TAGS = ['input', 'textarea'];
+
 // placeholder for clicket element
 let clickedEl = null;
 
@@ -19,8 +22,6 @@ document.addEventListener('mousedown', setClickedElement);
 // without second listener suggestion title is rendered as previous one 
 document.addEventListener('contextmenu', someDelay);
 chrome.runtime.onMessage.addListener(onContextMessage);
-suggestAutoFilling();
-
 
 function someDelay(e) {
   for (let i = 0; i < 20; i++) {
@@ -73,9 +74,8 @@ function getSuggestionKeywords(el) {
 
   // collect keywords from parent only when el is editable
   const elTag = el.nodeName.toLowerCase();
-  const editableTags = ['input', 'textarea'];
 
-  if (editableTags.includes(elTag)) {
+  if (EDITABLE_TAGS.includes(elTag)) {
     keywords.push(...getSuggestionKeywords(el.parentNode));
   } 
 
@@ -101,10 +101,11 @@ function getKeywordsFromLabels(labels = []) {
     .filter(Boolean);  
 };
 
-function onContextMessage(request) {
-  l('message', request.action);
-
+function onContextMessage(request, sender, sendResponse) {
   switch(request.action) {
+    case 'GIVE_PAGE_REPORT':
+      createPageReport(...arguments);
+      break;
     case 'SET_VALUE_FOR_CLICKED_ELEMENT': 
       setClickedElementValue(request.value); 
       break;
@@ -115,37 +116,16 @@ function onContextMessage(request) {
 };
 
 function setClickedElementValue(value) {
-  l('setting', value)
+  l('setting', value);
   clickedEl.value = value;
 };
 
-function suggestAutoFilling() {
-  fieldsToAutofill = Array.from(document.querySelectorAll('input, textarea'));
-
-  if (!fieldsToAutofill.length) {
-    return;
-  }
-
+function createPageReport(request, sender, sendResponse) {
+  const selector = EDITABLE_TAGS.join(', ');
+  fieldsToAutofill = Array.from(document.querySelectorAll(selector));
   const keywordsForFields = fieldsToAutofill.map(getSuggestionKeywords);
-
-  const question = document.createElement('div');
-  question.classList.add('serial_filler_question_wrapper');
-  question.addEventListener('click', () => { sendAutofillRequest(keywordsForFields); });
-
-  const itemsAmount = document.createElement('span');
-  itemsAmount.classList.add('serial_filler_question_label');
-  itemsAmount.textContent = `Psst..., uzupełnić ci ${fieldsToAutofill.length} pól? SF`;
-
-  question.appendChild(itemsAmount);
-  document.body.appendChild(question);
-
-  setTimeout(() => {
-    question.classList.add('opened');
-  }, 1000);
-
-  setTimeout(() => {
-    question.classList.remove('opened');
-  }, 6000);
+  l('sending report to', sender);
+  sendResponse({ fields: fieldsToAutofill });
 };
 
 function sendAutofillRequest(fields) {
