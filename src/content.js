@@ -109,6 +109,12 @@ function onContextMessage(request, sender, sendResponse) {
     case 'SET_VALUE_FOR_CLICKED_ELEMENT': 
       setClickedElementValue(request.value); 
       break;
+    case 'AUTOFILL':
+      onAutofillRequest(...arguments);
+      break;
+    case 'SET_GENERATED_VALUES':
+      onSetGeneratedValues(...arguments);
+      break;
     default: 
       l('unknown action', request.action);
       break;
@@ -128,18 +134,28 @@ function createPageReport(request, sender, sendResponse) {
   sendResponse({ fields: fieldsToAutofill });
 };
 
-function sendAutofillRequest(fields) {
-  const message = { action: 'AUTOFILL', fields };
-  chrome.runtime.sendMessage(message, onAutofillResponse);
+function onAutofillRequest(request, sender, sendResponse) {
+  const selector = EDITABLE_TAGS.join(', ');
+  fieldsToAutofill = Array.from(document.querySelectorAll(selector));
+  const keywordsForFields = fieldsToAutofill.map(getSuggestionKeywords);
+
+  sendResponse(keywordsForFields);
 };
 
-function onAutofillResponse(response) {
-  l('got suggestion response', response);
+function onSetGeneratedValues(request, sender, sendResponse) {
+  l('got fill request', request);
 
-  const suggestions = response.suggestions;
+  const { suggestions } = request;
+  let filed = 0;
+
   fieldsToAutofill.forEach((field, index) => {
     if (suggestions[index].value) {
       field.value = suggestions[index].value;
+      filed++;
     }
   });
+
+  const status = `filed: ${filed}, not: ${suggestions.length - filed}`;
+
+  sendResponse({ status });
 };

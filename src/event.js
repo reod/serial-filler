@@ -300,7 +300,9 @@ function setMenuOnClickedListener() {
 
 function setIconClickListener() {
   chrome.browserAction.onClicked.addListener(tab => {
-    
+    chrome.tabs.sendMessage(tab.id, {
+      action: 'AUTOFILL',
+    }, answerAutofillRequest);
   });
 }
 
@@ -322,9 +324,6 @@ function setOnContextMessageListener() {
     switch(request.action) {
       case 'SET_SUGGESTION':
         setSuggestionByKeywords(request.keywords);
-        break;
-      case 'AUTOFILL':
-        answerAutofillRequest(request.fields, sendResponse);
         break;
       default:
         l('unknown action', request.action);
@@ -401,8 +400,9 @@ function findSuggestionByKeywords(keywords) {
   return suggestion;
 };
 
-function answerAutofillRequest(fields, sendResponse) {
+function answerAutofillRequest(fields) {
   l('got autofill request', fields);
+
   const suggestions = fields
     .map(findSuggestionByKeywords)
     .map(binding => {
@@ -422,8 +422,12 @@ function answerAutofillRequest(fields, sendResponse) {
       return suggestion;
     });
 
-
-
   l('found suggestion', suggestions);
-  sendResponse({ suggestions });
+
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const message = { action: 'SET_GENERATED_VALUES', suggestions };
+    chrome.tabs.sendMessage(tabs[0].id, message, response => {
+      l('response after set suggestions', response);
+    });
+  });
 };
