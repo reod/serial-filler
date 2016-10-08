@@ -29,6 +29,26 @@ function someDelay(e) {
   }
 };
 
+function onContextMessage(request, sender, sendResponse) {
+  switch(request.action) {
+    case 'GIVE_PAGE_REPORT':
+      createPageReport(...arguments);
+      break;
+    case 'SET_VALUE_FOR_CLICKED_ELEMENT': 
+      setClickedElementValue(request.value); 
+      break;
+    case 'AUTOFILL':
+      onAutofillRequest(...arguments);
+      break;
+    case 'SET_GENERATED_VALUES':
+      onSetGeneratedValues(...arguments);
+      break;
+    default: 
+      l('unknown action', request.action);
+      break;
+  }
+};
+
 function setClickedElement(e) {
   clickedEl = null;
 
@@ -99,26 +119,6 @@ function getKeywordsFromLabels(labels = []) {
   return Array.from(labels)
     .map(label => label.innerText.trim())
     .filter(Boolean);  
-};
-
-function onContextMessage(request, sender, sendResponse) {
-  switch(request.action) {
-    case 'GIVE_PAGE_REPORT':
-      createPageReport(...arguments);
-      break;
-    case 'SET_VALUE_FOR_CLICKED_ELEMENT': 
-      setClickedElementValue(request.value); 
-      break;
-    case 'AUTOFILL':
-      onAutofillRequest(...arguments);
-      break;
-    case 'SET_GENERATED_VALUES':
-      onSetGeneratedValues(...arguments);
-      break;
-    default: 
-      l('unknown action', request.action);
-      break;
-  }
 };
 
 function setClickedElementValue(value) {
