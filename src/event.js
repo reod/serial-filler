@@ -20,45 +20,75 @@ function noop() {};
 let currentSuggestion = null;
 
 
-// create menu
+// so, let's go!
 setTabsListener();
 setMenuOnClickedListener();
 setIconClickListener();
 setOnContextMessageListener();
 createContextMenu(menuBindings);
 
+
 ///////////////////////////////////////////////////////
-// function definitions:
+// Icon & badge stuff
+// Future extension menu with setigns? 
+///////////////////////////////////////////////////////
+
+function setIconClickListener() {
+  chrome.browserAction.onClicked.addListener(tab => {
+    chrome.tabs.sendMessage(tab.id, {
+      action: 'AUTOFILL',
+    }, answerAutofillRequest);
+  });
+}
 
 function setTabsListener() {
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'loading') {
-      updateBadge(0);
-      return;
-    }
+  // listen to new pages opened in tabs to update badge
+  chrome.tabs.onUpdated.addListener(onTabUpdate);
+  // listen for tab change to update badge
+  chrome.tabs.onActivated.addListener();
+};
 
-    if (changeInfo.status === 'complete') {
-      chrome.tabs.get(tabId, tab => {
-        if (tab.url === 'chrome://newtab/') {
-          updateBadge(0);
-        } else {
-          l('tab', tabId, 'updated; sending page report request');
-          chrome.tabs.sendMessage(tabId, {
-            action: 'GIVE_PAGE_REPORT',
-          }, onPageReport);
-        }
-      });
-    }
-  });
+function onTabUpdate(tabId, changeInfo, tab) {
+  // clears badge when page is loading (mostly: refreshing)
+  if (changeInfo.status === 'loading') {
+    updateBadge(0);
+    return;
+  }
 
-  chrome.tabs.onActivated.addListener(activeInfo => {
-    const { tabId } = activeInfo;
+  if (changeInfo.status === 'complete') {
+    chrome.tabs.get(tabId, tab => {
+      if (tab.url === 'chrome://newtab/') {
+        updateBadge(0);
+      } else {
+        l('tab', tabId, 'updated; sending page report request');
+        chrome.tabs.sendMessage(tabId, {
+          action: 'GIVE_PAGE_REPORT',
+        }, onPageReport);
+      }
+    });
+  }
+};
 
-    l('tab', tabId, 'is active; sending page report request');
-    chrome.tabs.sendMessage(tabId, {
-      action: 'GIVE_PAGE_REPORT',
-    }, onPageReport);
-  });
+function onTabActive(activeInfo) {
+  const { tabId } = activeInfo;
+
+  l('tab', tabId, 'is active; sending page report request');
+  chrome.tabs.sendMessage(tabId, {
+    action: 'GIVE_PAGE_REPORT',
+  }, onPageReport);
+};
+
+function onPageReport(report) {
+  l('page report:', report);
+
+  // TODO: find out why and when is empty
+  if (!report) {
+    updateBadge(0);
+    return;
+  }
+
+  const { fields: { length: amount } } = report;
+  updateBadge(amount);
 };
 
 function updateBadge(amount) {
@@ -67,6 +97,43 @@ function updateBadge(amount) {
   chrome.browserAction.setBadgeText({ text: badge });
   chrome.browserAction.setTitle({ title });
 };
+
+function answerAutofillRequest(fields) {
+  l('got autofill request', fields);
+
+  const suggestions = fields
+    .map(findSuggestionByKeywords)
+    .map(binding => {
+      let suggestion = {};
+
+      if (!binding) {
+        return suggestion;
+      }
+
+      if (!binding.generator) {
+        return suggestion;
+      }
+
+      suggestion.generator = binding.generator.name;
+      suggestion.value = binding.generator();
+
+      return suggestion;
+    });
+
+  l('found suggestion', suggestions);
+
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const message = { action: 'SET_GENERATED_VALUES', suggestions };
+    chrome.tabs.sendMessage(tabs[0].id, message, response => {
+      l('response after set suggestions', response);
+    });
+  });
+};
+
+
+///////////////////////////////////////////////////////
+// Context menu
+///////////////////////////////////////////////////////
 
 function createContextMenu(descriptors = []) {
   descriptors.forEach(descriptor => {
@@ -136,14 +203,6 @@ function setMenuOnClickedListener() {
   });
 };
 
-function setIconClickListener() {
-  chrome.browserAction.onClicked.addListener(tab => {
-    chrome.tabs.sendMessage(tab.id, {
-      action: 'AUTOFILL',
-    }, answerAutofillRequest);
-  });
-}
-
 function getGeneratorFunction(id) {
   if (id === 'suggestion' && currentSuggestion) {
     return currentSuggestion.generator || noop;
@@ -168,19 +227,6 @@ function setOnContextMessageListener() {
         break;
     }
   });
-};
-
-function onPageReport(report) {
-  l('page report:', report);
-
-  // TODO: find out why and when is empty
-  if (!report) {
-    updateBadge(0);
-    return;
-  }
-
-  const { fields: { length: amount } } = report;
-  updateBadge(amount);
 };
 
 function setSuggestionByKeywords(keywords = []) {
@@ -238,34 +284,3 @@ function findSuggestionByKeywords(keywords) {
   return suggestion;
 };
 
-function answerAutofillRequest(fields) {
-  l('got autofill request', fields);
-
-  const suggestions = fields
-    .map(findSuggestionByKeywords)
-    .map(binding => {
-      let suggestion = {};
-
-      if (!binding) {
-        return suggestion;
-      }
-
-      if (!binding.generator) {
-        return suggestion;
-      }
-
-      suggestion.generator = binding.generator.name;
-      suggestion.value = binding.generator();
-
-      return suggestion;
-    });
-
-  l('found suggestion', suggestions);
-
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const message = { action: 'SET_GENERATED_VALUES', suggestions };
-    chrome.tabs.sendMessage(tabs[0].id, message, response => {
-      l('response after set suggestions', response);
-    });
-  });
-};
