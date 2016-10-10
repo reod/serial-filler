@@ -15,7 +15,10 @@ const EDITABLE_TAGS = ['input', 'textarea'];
 let clickedEl = null;
 
 // placeholder for fields that can be autofilles
-let fieldsToAutofill = null;
+let fieldsToAutofill = [];
+
+// placeholder for suggestions related with filds (order matters!!!)
+let suggestionsForAutofill = [];
 
 document.addEventListener('mousedown', setClickedElement);
 // don't know why, but when this is added, suggestion just work
@@ -31,17 +34,17 @@ function someDelay(e) {
 
 function onContextMessage(request, sender, sendResponse) {
   switch(request.action) {
-    case 'GIVE_PAGE_REPORT':
+    case 'CREATE_PAGE_REPORT':
       createPageReport(...arguments);
+      break;
+    case 'SET_SUGGESTIONS':
+      setSuggestions(...arguments);
+      break;
+    case 'AUTOFILL':
+      autofill(...arguments);
       break;
     case 'SET_VALUE_FOR_CLICKED_ELEMENT': 
       setClickedElementValue(request.value); 
-      break;
-    case 'AUTOFILL':
-      onAutofillRequest(...arguments);
-      break;
-    case 'SET_GENERATED_VALUES':
-      onSetGeneratedValues(...arguments);
       break;
     default: 
       l('unknown action', request.action);
@@ -131,31 +134,28 @@ function createPageReport(request, sender, sendResponse) {
   fieldsToAutofill = Array.from(document.querySelectorAll(selector));
   const keywordsForFields = fieldsToAutofill.map(getSuggestionKeywords);
   l('sending report to', sender);
-  sendResponse({ fields: fieldsToAutofill });
+  sendResponse({ fields: keywordsForFields });
 };
 
-function onAutofillRequest(request, sender, sendResponse) {
-  const selector = EDITABLE_TAGS.join(', ');
-  fieldsToAutofill = Array.from(document.querySelectorAll(selector));
-  const keywordsForFields = fieldsToAutofill.map(getSuggestionKeywords);
-
-  sendResponse(keywordsForFields);
+function setSuggestions(request, sender, sendResponse) {
+  const { suggestions } = request;
+  suggestionsForAutofill = suggestions;
+  sendResponse({ status: 'done' });
 };
 
-function onSetGeneratedValues(request, sender, sendResponse) {
+function autofill(request, sender, sendResponse) {
   l('got fill request', request);
 
-  const { suggestions } = request;
   let filed = 0;
 
   fieldsToAutofill.forEach((field, index) => {
-    if (suggestions[index].value) {
-      field.value = suggestions[index].value;
+    if (suggestionsForAutofill[index].value) {
+      field.value = suggestionsForAutofill[index].value;
       filed++;
     }
   });
 
-  const status = `filed: ${filed}, not: ${suggestions.length - filed}`;
+  const status = `filed: ${filed}, not: ${suggestionsForAutofill.length - filed}`;
 
   sendResponse({ status });
 };

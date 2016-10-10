@@ -35,17 +35,18 @@ createContextMenu(menuBindings);
 
 function setIconClickListener() {
   chrome.browserAction.onClicked.addListener(tab => {
-    chrome.tabs.sendMessage(tab.id, {
-      action: 'AUTOFILL',
-    }, answerAutofillRequest);
+    const message = { action: 'AUTOFILL' };
+    chrome.tabs.sendMessage(tab.id, message, response => {
+      l('response after set suggestions', response);
+    });
   });
-}
+};
 
 function setTabsListener() {
   // listen to new pages opened in tabs to update badge
   chrome.tabs.onUpdated.addListener(onTabUpdate);
   // listen for tab change to update badge
-  chrome.tabs.onActivated.addListener();
+  chrome.tabs.onActivated.addListener(onTabActive);
 };
 
 function onTabUpdate(tabId, changeInfo, tab) {
@@ -62,8 +63,8 @@ function onTabUpdate(tabId, changeInfo, tab) {
       } else {
         l('tab', tabId, 'updated; sending page report request');
         chrome.tabs.sendMessage(tabId, {
-          action: 'GIVE_PAGE_REPORT',
-        }, onPageReport);
+          action: 'CREATE_PAGE_REPORT',
+        }, onPageReport.bind(null, tabId));
       }
     });
   }
@@ -74,37 +75,53 @@ function onTabActive(activeInfo) {
 
   l('tab', tabId, 'is active; sending page report request');
   chrome.tabs.sendMessage(tabId, {
-    action: 'GIVE_PAGE_REPORT',
-  }, onPageReport);
+    action: 'CREATE_PAGE_REPORT',
+  }, onPageReport.bind(null, tabId));
 };
 
-function onPageReport(report) {
-  l('page report:', report);
+function onPageReport(tabId, report) {
+  l('page report for tab', tabId, ':', report);
 
   // TODO: find out why and when is empty
   if (!report) {
+    l('empty report for tab', tabId);
     updateBadge(0);
     return;
   }
 
-  const { fields: { length: amount } } = report;
-  updateBadge(amount);
+  const { fields } = report;
+  const suggestions = getSuggestionForFields(fields);
+
+  l('found suggestion', suggestions);
+
+  chrome.tabs.sendMessage(tabId, {
+    action: 'SET_SUGGESTIONS',
+    suggestions
+  }, res => l('suggestions set', res));
+
+  const result = suggestions.reduce((res, suggestion) => {
+    if (suggestion.value) {
+      res.can++;
+    } else {
+      res.missing++;
+    }
+
+    return res;
+  }, { can: 0, missing: 0 });
+
+  l('suggestion found for', result.can, 'from', result.can + result.missing);
+
+  updateBadge(result.can);
 };
 
-function updateBadge(amount) {
-  const badge = amount ? String(amount) : '';
-  const title = badge ? `Autofill ${amount} fields.` : 'No fields to autofill.';
-  chrome.browserAction.setBadgeText({ text: badge });
-  chrome.browserAction.setTitle({ title });
-};
-
-function answerAutofillRequest(fields) {
-  l('got autofill request', fields);
-
+function getSuggestionForFields(fields) {
   const suggestions = fields
     .map(findSuggestionByKeywords)
     .map(binding => {
-      let suggestion = {};
+      let suggestion = {
+        generator: null,
+        value: null,
+      };
 
       if (!binding) {
         return suggestion;
@@ -120,14 +137,14 @@ function answerAutofillRequest(fields) {
       return suggestion;
     });
 
-  l('found suggestion', suggestions);
+  return suggestions;
+};
 
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const message = { action: 'SET_GENERATED_VALUES', suggestions };
-    chrome.tabs.sendMessage(tabs[0].id, message, response => {
-      l('response after set suggestions', response);
-    });
-  });
+function updateBadge(amount) {
+  const badge = amount ? String(amount) : '';
+  const title = badge ? `Autofill ${amount} fields.` : 'No fields to autofill.';
+  chrome.browserAction.setBadgeText({ text: badge });
+  chrome.browserAction.setTitle({ title });
 };
 
 
