@@ -3,7 +3,7 @@
 
   "name": "SerialFiller",
   "description": "Wygeneruj losowe numery by wypełnić formularze na stronach WWW.",
-  "version": "0.1.0",
+  "version": "0.2.0",
 
   "background": {
     "scripts": ["generators.js", "menu-bindings.js", "event.js"],
