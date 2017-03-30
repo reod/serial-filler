@@ -75,7 +75,7 @@ const menuBindings = [
     id: 'phone_a',
     parentId: 'phones',
     title: 'Numer telefonu 504234213',
-    generator: createRandomPatternInFormat.bind(null, 'ddddddddd'),
+    generator: generatePhoneNumber,
     keywords: ['phone', 'mobile-phone'],
   },
 
@@ -83,7 +83,7 @@ const menuBindings = [
     id: 'phone_b',
     parentId: 'phones',
     title: 'Numer telefonu jako 2549923',
-    generator: createRandomPatternInFormat.bind(null, 'ddddddd'),
+    generator: generatePhoneNumber,
     keywords: ['landline-phone'],
   },
 

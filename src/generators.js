@@ -274,3 +274,10 @@ function generateName(length = 7) {
 
   return name;
 };
+
+function generatePhoneNumber() {
+  const leadingNumber = generateRandomNumberBetween(1, 9);
+  const rest = createRandomPatternInFormat('dddddd');
+
+  return leadingNumber + rest;
+};
