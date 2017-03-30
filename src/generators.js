@@ -274,5 +274,3 @@ function generateName(length = 7) {
 
   return name;
 };
-
-

@@ -300,4 +300,3 @@ function findSuggestionByKeywords(keywords) {
 
   return suggestion;
 };
-
