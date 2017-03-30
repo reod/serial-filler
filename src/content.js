@@ -62,7 +62,7 @@ function setClickedElement(e) {
 
   let tagName = e.target.tagName.toLowerCase();
 
-  if (tagName === 'textarea' || tagName === 'input') {
+  if (EDITABLE_TAGS.includes(tagName)) {
     clickedEl = e.target;
     chrome.runtime.sendMessage({
       action: 'SET_SUGGESTION',
