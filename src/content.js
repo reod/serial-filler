@@ -93,7 +93,7 @@ function getSuggestionKeywords(el) {
   keywords.push(...attrsNames);
 
   // add value of label
-  keywords.push(...getKeywordsFromLabels(el.labels));
+  keywords.push(...getKeywordsFromLabels(el.labels || []));
 
   // collect keywords from parent only when el is editable
   const elTag = el.nodeName.toLowerCase();
