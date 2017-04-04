@@ -153,6 +153,7 @@ const menuBindings = [
     generator: generateLoremIpsumParagraph,
     keywords: ['paragraph', 'comment'],
   },
+
   {
     id: 'many_paragraphs',
     title: 'Kilka akapitów',
@@ -160,4 +161,10 @@ const menuBindings = [
     keywords: [],
   },
 
+  {
+    id: 'imei',
+    title: 'Numer IMEI',
+    generator: generateIMEI,
+    keywords: ['imei'],
+  },
 ];

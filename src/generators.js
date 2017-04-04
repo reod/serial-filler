@@ -281,3 +281,46 @@ function generatePhoneNumber() {
 
   return leadingNumber + rest;
 };
+
+function generateIMEI() {
+  const rbi = ['01', '10', '30', '33', '35', '44', '45', '49', '50', '51', '52', '53', '54', '86', '91', '98', '99'];
+  const arr = rbi[Math.floor(Math.random() * rbi.length)].split('');
+  let imeiLength = 15;
+  let sum = 0;
+  let position = 2;
+  let offset = 0;
+  let imeiAsString = new Array(0).fill(15);
+
+  imeiAsString[0] = Number(arr[0]);
+  imeiAsString[1] = Number(arr[1]);
+
+  while (position < imeiLength - 1) {
+    imeiAsString[position++] = Math.floor(Math.random() * 10) % 10;
+  }
+
+  offset = (imeiLength + 1) % 2;
+
+  let imei = 0;
+
+  for (position = 0; position < imeiLength - 1; position++) {
+    if ((position + offset) % 2) {
+      imei = imeiAsString[position] * 2;
+
+      if (imei > 9) {
+          imei -= 9;
+      }
+
+      sum += imei;
+    } else {
+      sum += imeiAsString[position];
+    }
+  }
+
+  const lastDigit = (10 - (sum % 10)) % 10;
+  imeiAsString[imeiLength - 1] = lastDigit;
+
+  imei = imeiAsString.join('');
+  imei = imei.substr(0, imeiLength);
+
+  return imei;
+};
