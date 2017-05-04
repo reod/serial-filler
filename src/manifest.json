@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "SerialFiller",
-  "description": "Wygeneruj losowe numery by wypełnić formularze na stronach WWW.",
+  "name": "Serial Filler",
+  "description": "Wygeneruj losowe numery by wypełnić formularze na stronach WWW jednym kliknięciem.",
   "version": "0.2.0",
 
   "background": {
