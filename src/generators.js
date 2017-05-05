@@ -324,3 +324,76 @@ function generateIMEI() {
 
   return imei;
 };
+
+function generateISBN10() {
+  const SPARATOR = '-';
+  const countryCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
+  const publisherCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
+  const publicationCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
+
+  let ISBN10 = [
+    countryCodePattern,
+    publisherCodePattern,
+    publicationCodePattern,
+  ]
+    .map(createRandomPatternInFormat)
+    .join(SEPARATOR)
+    .concat(SEPARATOR);
+
+  ISBN10
+    .concat(calculateISBN10CheckSum(ISBN10))
+    .join('');
+
+  return ISBN10;
+};
+
+function calculateISBN10CheckSum(isbnWithoutCheckSum) {
+  const cleardISBN10 = String(isbnWithoutCheckSum).replace(/-/ig, '');
+  const ISBN10AsArray = Array.from(cleardISBN10);
+  const sumByPosition = ISBN10AsArray.reduce((sum, num, index) => {
+    sum += parseInt(num, 10) * (index + 1);
+    return sum;
+  }, 0);
+
+  return sumByPosition % 11;
+};
+
+function generateISBN10(withPrefix = false) {
+  const SEPARATOR = '-';
+  const countryCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
+  const publisherCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
+  const publicationCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
+
+  let ISBN10 = [
+    countryCodePattern,
+    publisherCodePattern,
+    publicationCodePattern
+  ]
+    .map(createRandomPatternInFormat)
+    .join(SEPARATOR)
+    .split('')
+    .concat(SEPARATOR);
+
+  const sum = calculateISBN10CheckSum(ISBN10, SEPARATOR);
+
+  ISBN10 = ISBN10
+    .concat(sum)
+    .join('');
+
+  if (withPrefix) {
+    ISBN10 = 'ISBN ' + ISBN10;
+  }
+
+  return ISBN10;
+};
+
+function calculateISBN10CheckSum(isbnWithoutCheckSum) {
+  const cleardISBN10 = String(isbnWithoutCheckSum).replace(/\D/ig, '');
+  const ISBN10AsArray = Array.from(cleardISBN10);
+  const sumByPosition = ISBN10AsArray.reduce((sum, num, index) => {
+    sum += parseInt(num, 10) * (index + 1);
+    return sum;
+  }, 0);
+
+  return sumByPosition % 11;
+};

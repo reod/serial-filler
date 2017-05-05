@@ -167,4 +167,12 @@ const menuBindings = [
     generator: generateIMEI,
     keywords: ['imei'],
   },
+
+  {
+    id: 'isbn10',
+    title: 'ISBN-10',
+    generator: generateISBN10,
+    keywords: ['isbn', 'isbn-10', 'isbn10']
+  },
+
 ];
