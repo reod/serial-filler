@@ -169,10 +169,26 @@ const menuBindings = [
   },
 
   {
+    id: 'isbns',
+    title: 'Numer ISBN',
+    generator: generateISBN13,
+    keywords: ['isbn'],
+  },
+
+  {
     id: 'isbn10',
+    parentId: 'isbns',
     title: 'ISBN-10',
     generator: generateISBN10,
-    keywords: ['isbn', 'isbn-10', 'isbn10']
+    keywords: ['isbn-10', 'isbn10']
+  },
+
+  {
+    id: 'isbn13',
+    parentId: 'isbns',
+    title: 'ISBN-13',
+    generator: generateISBN13,
+    keywords: ['isbn-13', 'isbn13']
   },
 
 ];

@@ -358,18 +358,17 @@ function calculateISBN10CheckSum(isbnWithoutCheckSum) {
   return sumByPosition % 11;
 };
 
-function generateISBN10(withPrefix = false) {
+function generateISBN10(withISBNText = false) {
   const SEPARATOR = '-';
-  const countryCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
-  const publisherCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
-  const publicationCodePattern = 'd'.repeat(generateRandomNumberBetween(1, 5));
+  const countryCode = createRandomPatternInFormat('d'.repeat(2));
+  const publisherCode = createRandomPatternInFormat('d'.repeat(4));
+  const publicationCode = createRandomPatternInFormat('d'.repeat(3));
 
   let ISBN10 = [
-    countryCodePattern,
-    publisherCodePattern,
-    publicationCodePattern
+    countryCode,
+    publisherCode,
+    publicationCode
   ]
-    .map(createRandomPatternInFormat)
     .join(SEPARATOR)
     .split('')
     .concat(SEPARATOR);
@@ -380,7 +379,7 @@ function generateISBN10(withPrefix = false) {
     .concat(sum)
     .join('');
 
-  if (withPrefix) {
+  if (withISBNText) {
     ISBN10 = 'ISBN ' + ISBN10;
   }
 
@@ -390,10 +389,71 @@ function generateISBN10(withPrefix = false) {
 function calculateISBN10CheckSum(isbnWithoutCheckSum) {
   const cleardISBN10 = String(isbnWithoutCheckSum).replace(/\D/ig, '');
   const ISBN10AsArray = Array.from(cleardISBN10);
+
   const sumByPosition = ISBN10AsArray.reduce((sum, num, index) => {
     sum += parseInt(num, 10) * (index + 1);
     return sum;
   }, 0);
 
   return sumByPosition % 11;
+};
+
+function generateISBN13(withISBNText = false) {
+  const STANDARD_PREFIX = 978;
+  const SEPARATOR = '-';
+  const countryCode = createRandomPatternInFormat('d'.repeat(2));
+  const publisherCode = createRandomPatternInFormat('d'.repeat(4));
+  const publicationCode = createRandomPatternInFormat('d'.repeat(3));
+
+  let ISBN13 = [
+    STANDARD_PREFIX,
+    countryCode,
+    publisherCode,
+    publicationCode
+  ]
+    .join(SEPARATOR)
+    .split('')
+    .concat(SEPARATOR);
+
+  const sum = calculateISBN13CheckSum(ISBN13, SEPARATOR);
+
+  ISBN13 = ISBN13
+    .concat(sum)
+    .join('');
+
+  if (withISBNText) {
+    ISBN13 = 'ISBN ' + ISBN13;
+  }
+
+  return ISBN13;
+};
+
+function calculateISBN13CheckSum(isbnWithoutCheckSum) {
+  const cleardISBN13 = String(isbnWithoutCheckSum).replace(/\D/ig, '');
+  const ISBN13AsArray = Array.from(cleardISBN13);
+
+  const getDigitWeigth = (position, digit) => {
+    const forOdd = 1;
+    const forEven = 3;
+    const isEven = (n) => n % 2 === 0;
+    const weigth = isEven(position) ? forEven : forOdd;
+
+    return weigth;
+  };
+
+  const sumByPosition = ISBN13AsArray.reduce((sum, digit, index) => {
+    digit = parseInt(digit, 10);
+    const position = index + 1;
+    const weight = getDigitWeigth(position, digit);
+
+    sum += digit * weight;
+
+    return sum;
+  }, 0);
+
+  let checkSum = sumByPosition % 10;
+  checkSum = 10 - checkSum;
+  checkSum = checkSum % 10;
+
+  return checkSum;
 };
