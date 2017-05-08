@@ -1,5 +1,10 @@
 // set to true only for development
-const debug = true;
+const debug = false;
+
+// for pages with example
+const sfDOMId = document.createElement('div');
+sfDOMId.id = '__SERIAL__FILLER__INSTALLED';
+document.body.appendChild(sfDOMId);
 
 // logger helper
 function l() {
