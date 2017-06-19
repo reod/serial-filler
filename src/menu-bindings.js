@@ -191,4 +191,12 @@ const menuBindings = [
     keywords: ['isbn-13', 'isbn13']
   },
 
+  {
+    id: 'ipv4',
+    // parentId: 'isbns',
+    title: 'IPv4',
+    generator: generateIPv4,
+    keywords: ['ip', 'ipv4', 'ip-v4']
+  },
+
 ];
