@@ -457,3 +457,15 @@ function calculateISBN13CheckSum(isbnWithoutCheckSum) {
 
   return checkSum;
 };
+
+function generateIPv4() {
+  const segments = [
+    generateRandomNumberBetween(190, 255),
+    generateRandomNumberBetween(0, 10),
+    generateRandomNumberBetween(1, 13),
+    generateRandomNumberBetween(190, 255),
+  ]; 
+
+  const ipv4 = segments.join('.');
+  return ipv4;
+};
