@@ -63,6 +63,10 @@ function generateRandomNumberBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+function generateRandomFloatBetween(from, to, fixed) {
+  return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
+}
+
 function generateRandomCharFrom(chars = '') {
   const i = Math.floor(Math.random() * chars.length);
   return chars[i];
@@ -468,4 +472,13 @@ function generateIPv4() {
 
   const ipv4 = segments.join('.');
   return ipv4;
+};
+
+function generateCoordinates() {
+  const segments = [
+    generateRandomFloatBetween(-90, 90, 3),
+    generateRandomFloatBetween(-180, 180, 3),
+  ];
+  const coordiantes = segments.join(',');
+  return coordiantes;
 };
