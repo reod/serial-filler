@@ -65,7 +65,7 @@ function generateRandomNumberBetween(min, max) {
 
 function generateRandomFloatBetween(from, to, fixed) {
   return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
-}
+};
 
 function generateRandomCharFrom(chars = '') {
   const i = Math.floor(Math.random() * chars.length);
