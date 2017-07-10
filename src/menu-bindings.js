@@ -199,4 +199,11 @@ const menuBindings = [
     keywords: ['ip', 'ipv4', 'ip-v4']
   },
 
+  {
+    id: 'coordinates',
+    title: 'Coordinates',
+    generator: generateCoordinates,
+    keywords: ['coordinates', 'latlng', 'coords']
+  },
+
 ];
