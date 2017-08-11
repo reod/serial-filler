@@ -1,0 +1,7 @@
+.hidden {
+  display: none !important;
+}
+
+label {
+  text-align: right
+}

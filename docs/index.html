@@ -1,1 +1,144 @@
-siema.
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Serial Filler</title>
+        <meta name="description" content="Strona rozszerzenia Serial Filler">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+      <div class="container">
+
+        <header>
+          <h1>Serial Filler</h1>
+        </header>
+
+        <div class="alert alert-danger hidden" id="no-serial-filler" role="alert">
+          Upewnij się, ze masz zainstalowany dodatek Serial Filler!
+        </div>
+        
+        <nav>
+          <ol>
+            <li>
+              <a href="#examples">Przykłay formularzy</a>
+              <ol>
+                <li>
+                  <a href="#example-register">Formularz rejestracji</a>
+                </li>
+                <li>
+                  <a href="#example-company">Zakupy na firmę</a>
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </nav>
+        <div class="content">
+
+          <h2>Przykład formularza</h2>
+
+          <h3 id="example-register">Prosty formularz rejestracji</h3>
+
+          <div class="form-group row">
+            <label for="name" class="col-2 col-form-label">Imię</label>
+            <div class="col-10">
+              <input class="form-control" type="text" id="name" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="surname" class="col-2 col-form-label">Nazwisko</label>
+            <div class="col-10">
+              <input class="form-control" type="text" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="email" class="col-2 col-form-label">Email</label>
+            <div class="col-10">
+              <input class="form-control" type="text" id="email" />
+            </div>
+          </div>
+
+          <h3 id="example-company">Skomplikowany formularz rejestracji firmy</h3>
+
+          <div class="form-group row">
+            <label for="company-name" class="col-2 col-form-label">Nazwa firmy</label>
+            <div class="col-10">
+              <input class="form-control" type="text" id="company-name" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="name2" class="col-2 col-form-label">Imię</label>
+            <div class="col-4">
+              <input class="form-control" type="text" id="name2" />
+            </div>
+
+            <label for="surname2" class="col-2 col-form-label">Nazwisko</label>
+            <div class="col-4">
+              <input class="form-control" type="text" id="surname2" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="nip" class="col-2 col-form-label">NIP</label>
+            <div class="col-4">
+              <input class="form-control" type="text" id="nip" />
+            </div>
+
+            <label for="regon-9" class="col-2 col-form-label">REGON</label>
+            <div class="col-4">
+              <input class="form-control" type="text" id="regon-9" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="city" class="col-2 col-form-label">Miasto</label>
+            <div class="col-10">
+              <input class="form-control" type="text" id="city" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="street" class="col-2 col-form-label">Ulica</label>
+            <div class="col-10">
+              <input class="form-control" type="text" id="street" />
+            </div>
+          </div>
+            
+          <div class="form-group row">
+            <label for="building-number" class="col-2 col-form-label">Nr budynku</label>
+            <div class="col-4">
+              <input class="form-control" type="text" id="building-number" />
+            </div>
+
+            <label for="apartment-number" class="col-2 col-form-label">Nr lokalu</label>
+            <div class="col-4">
+              <input class="form-control" type="text" id="apartment-number" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="pesel" class="col-2 col-form-label">PESEL</label>
+            <div class="col-10">
+              <input class="form-control" type="text" id="pesel" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="email" class="col-2 col-form-label">Email</label>
+            <div class="col-10">
+              <input class="form-control" type="text" id="email" />
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <script type="text/javascript" src="js/main.js"></script>
+    </body>
+</html>
