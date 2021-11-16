@@ -2,7 +2,7 @@
 // menu-bindings are loaded from menu-bindings.js
 
 // set to true only for development
-const debug = true;
+const debug = false;
 
 // logger helper
 function l() {
